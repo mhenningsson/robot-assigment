@@ -60,6 +60,25 @@ function App() {
     return newDir;
   };
 
+  const getUpdatedPositions = (prevPositions) => {
+    let x = prevPositions.x;
+    let y = prevPositions.y;
+
+    // Moves on y-axis if caridnal direction is N or S
+    // Moves on x-axis if caridnal direction is W or E
+    if (prevPositions.d === "N") {
+      y = prevPositions.y - 1;
+    } else if (prevPositions.d === "S") {
+      y = prevPositions.y + 1;
+    } else if (prevPositions.d === "W") {
+      x = prevPositions.x - 1;
+    } else if (prevPositions.d === "E") {
+      x = prevPositions.x + 1;
+    }
+
+    return { x, y };
+  };
+
   const moveRobot = (userInput) => {
     let newPosition = JSON.parse(JSON.stringify(startPosition));
     const input = userInput.trim();
@@ -67,20 +86,22 @@ function App() {
     for (let i = 0; i < input.length; i++) {
       if (input.charAt(i).toUpperCase() === "L") {
         // Change direction
-        const newDir = getCardinalDirection("L", newPosition.d);
-        newPosition.d = newDir;
+        const updatedDir = getCardinalDirection("L", newPosition.d);
+        newPosition.d = updatedDir;
       }
       if (input.charAt(i).toUpperCase() === "R") {
         // Change direction
-        const newDir = getCardinalDirection("R", newPosition.d);
-        newPosition.d = newDir;
+        const updatedDir = getCardinalDirection("R", newPosition.d);
+        newPosition.d = updatedDir;
       }
       if (input.charAt(i).toUpperCase() === "F") {
         // Change position
+        const updatedPositions = getUpdatedPositions(newPosition);
+        newPosition.x = updatedPositions.x;
+        newPosition.y = updatedPositions.y;
       }
     }
     setEndPosition(newPosition);
-    setUserInput("");
   };
 
   const restartTask = () => {
