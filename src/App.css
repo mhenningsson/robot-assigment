@@ -35,6 +35,9 @@ li {
 
 .input-area {
   margin: 1.5rem 0 2rem;
+}
+
+form {
   display: flex;
   flex-direction: column;
   justify-content: center;
