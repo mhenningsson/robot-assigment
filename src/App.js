@@ -167,7 +167,9 @@ function App() {
               {endPosition.x}, {endPosition.y}, {endPosition.d}
             </strong>
           ) : (
-            <em>please enter robot movements above to get an end position</em>
+            <span className="small-info-text">
+              please enter robot movements above to get an end position
+            </span>
           )}
         </p>
         <button onClick={restartTask}>Restart</button>
