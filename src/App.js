@@ -16,16 +16,15 @@ function App() {
     const y = Math.floor(Math.random() * (max - min + 1) + min);
     setRoomSize({ x, y });
 
-    // Get robot position within room
-    const robotPositionX = Math.floor(Math.random() * x);
-    const robotPositionY = Math.floor(Math.random() * y);
-    const robotDirection =
+    // Get random robot position within room
+    const startPositionX = Math.floor(Math.random() * x);
+    const startPositionY = Math.floor(Math.random() * y);
+    const startDirection =
       directions[Math.floor(Math.random() * directions.length)];
-
     setStartPosition({
-      x: robotPositionX,
-      y: robotPositionY,
-      d: robotDirection,
+      x: startPositionX,
+      y: startPositionY,
+      d: startDirection,
     });
   };
 
@@ -34,7 +33,7 @@ function App() {
     getStartValues();
   }, []);
 
-  const getCardinalDirection = (movement, prevDir) => {
+  const getUpdatedDirection = (movement, prevDir) => {
     let newDir = "";
     if (movement === "L") {
       if (prevDir === "N") {
@@ -60,20 +59,20 @@ function App() {
     return newDir;
   };
 
-  const getUpdatedPositions = (prevPositions) => {
-    let x = prevPositions.x;
-    let y = prevPositions.y;
+  const getUpdatedPositions = (prevPos) => {
+    let x = prevPos.x;
+    let y = prevPos.y;
 
-    // Moves on y-axis if caridnal direction is N or S
-    // Moves on x-axis if caridnal direction is W or E
-    if (prevPositions.d === "N") {
-      y = prevPositions.y - 1;
-    } else if (prevPositions.d === "S") {
-      y = prevPositions.y + 1;
-    } else if (prevPositions.d === "W") {
-      x = prevPositions.x - 1;
-    } else if (prevPositions.d === "E") {
-      x = prevPositions.x + 1;
+    // Move on y-axis if direction is N or S
+    // Move on x-axis if direction is W or E
+    if (prevPos.d === "N") {
+      y = prevPos.y - 1;
+    } else if (prevPos.d === "S") {
+      y = prevPos.y + 1;
+    } else if (prevPos.d === "W") {
+      x = prevPos.x - 1;
+    } else if (prevPos.d === "E") {
+      x = prevPos.x + 1;
     }
 
     return { x, y };
@@ -86,15 +85,13 @@ function App() {
     for (let i = 0; i < input.length; i++) {
       if (input.charAt(i).toUpperCase() === "L") {
         // Change direction
-        const updatedDir = getCardinalDirection("L", newPosition.d);
+        const updatedDir = getUpdatedDirection("L", newPosition.d);
         newPosition.d = updatedDir;
-      }
-      if (input.charAt(i).toUpperCase() === "R") {
+      } else if (input.charAt(i).toUpperCase() === "R") {
         // Change direction
-        const updatedDir = getCardinalDirection("R", newPosition.d);
+        const updatedDir = getUpdatedDirection("R", newPosition.d);
         newPosition.d = updatedDir;
-      }
-      if (input.charAt(i).toUpperCase() === "F") {
+      } else if (input.charAt(i).toUpperCase() === "F") {
         // Change position
         const updatedPositions = getUpdatedPositions(newPosition);
         newPosition.x = updatedPositions.x;
@@ -104,14 +101,6 @@ function App() {
     setEndPosition(newPosition);
   };
 
-  const restartTask = () => {
-    setUserInput("");
-    setRoomSize({ x: "", y: "" });
-    setStartPosition({ x: 0, y: 0, d: "N" });
-    setEndPosition({});
-    getStartValues();
-  };
-
   const handleChange = (e) => {
     setUserInput(e.target.value);
   };
@@ -119,6 +108,14 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     moveRobot(userInput);
+  };
+
+  const restartTask = () => {
+    setUserInput("");
+    setRoomSize({ x: "", y: "" });
+    setStartPosition({ x: 0, y: 0, d: "N" });
+    setEndPosition({});
+    getStartValues();
   };
 
   return (
@@ -144,7 +141,7 @@ function App() {
             type="text"
             value={userInput}
             onChange={(e) => handleChange(e)}
-            placeholder="Enter a string to change the robots position..."
+            placeholder="Type to change the robots position..."
           />
           <button type="submit">Move robot</button>
         </form>
